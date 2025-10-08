@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delete Student — CyberNet</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>🔴 Delete Student</h1>
+      <p class="subtitle">Permanently remove a record from the Cyber Academy system.</p>
+    </header>
+
+    <div class="card">
+      <div class="top-actions">
+        <button class="neon-btn blue" onclick="location.href='index.html'">← Back</button>
+      </div>
+
+      <form id="deleteForm" class="form-area vertical">
+        <input type="text" id="name" class="neon-input" placeholder="Name (optional)" />
+        <input type="text" id="rollNumber" class="neon-input" placeholder="Roll Number (required)" required />
+        <button type="submit" class="neon-btn red">Delete</button>
+      </form>
+
+      <p id="msg" class="message"></p>
+    </div>
+
+    <footer>
+      <p>© 2025 CyberNet — Student Management</p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("deleteForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const rollNumber = document.getElementById("rollNumber").value.trim();
+      const msg = document.getElementById("msg");
+
+      msg.textContent = "";
+      msg.className = "message";
+
+      if (!rollNumber) {
+        msg.textContent = "⚠️ Please enter roll number.";
+        msg.classList.add("error");
+        return;
+      }
+
+      if (!confirm("⚠️ Are you sure you want to delete this student? This action cannot be undone.")) {
+        msg.textContent = "❌ Deletion cancelled.";
+        msg.classList.add("error");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/students", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, rollNumber })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = `✅ ${data.message}`;
+          msg.classList.add("success");
+        } else {
+          msg.textContent = `⚠️ ${data.message}`;
+          msg.classList.add("error");
+        }
+      } catch (err) {
+        msg.textContent = "🚫 Failed to connect to server.";
+        msg.classList.add("error");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Student — CyberNet</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>🔍 Search Student</h1>
+      <p class="subtitle">Find a student by roll number in the neon grid.</p>
+    </header>
+
+    <div class="card">
+      <div class="top-actions">
+        <button class="neon-btn blue" onclick="location.href='index.html'">← Back</button>
+      </div>
+
+      <div class="form-area">
+        <input type="text" id="roll" placeholder="Enter Roll Number" class="neon-input" />
+        <button id="searchBtn" class="neon-btn pink">Search</button>
+      </div>
+
+      <ul id="result" class="neon-list"></ul>
+    </div>
+
+    <footer>
+      <p>© 2025 CyberNet — Student Management</p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("searchBtn").addEventListener("click", async () => {
+      const roll = document.getElementById("roll").value.trim();
+      const result = document.getElementById("result");
+      result.innerHTML = "";
+
+      if (!roll) {
+        alert("⚠️ Enter roll number!");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/students");
+        const students = await res.json();
+        const found = students.find(s => s.rollNumber === roll);
+
+        if (found) {
+          result.innerHTML = `
+            <li>
+              <span class="roll">${found.rollNumber}</span>
+              <div class="info">
+                <strong>${found.name}</strong>
+                <small>${found.course}</small>
+              </div>
+            </li>
+          `;
+        } else {
+          result.innerHTML = `<li class="empty">No student found with Roll No: ${roll}</li>`;
+        }
+      } catch (err) {
+        alert("❌ Failed to connect to the server.");
+      }
+    });
+  </script>
+</body>
+</html>

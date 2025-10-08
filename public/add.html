@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Student — CyberNet</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>➕ Add New Student</h1>
+      <p class="subtitle">Enroll a new cadet into the Cyber Academy database.</p>
+    </header>
+
+    <div class="card">
+      <div class="top-actions">
+        <button class="neon-btn blue" onclick="location.href='index.html'">← Back</button>
+      </div>
+
+      <form id="addForm" class="form-area vertical">
+        <input type="text" id="name" class="neon-input" placeholder="Student Name" required />
+        <input type="text" id="roll" class="neon-input" placeholder="Roll Number" required />
+        <input type="text" id="course" class="neon-input" placeholder="Course" required />
+        <button type="submit" class="neon-btn green">Add Student</button>
+      </form>
+
+      <p id="msg" class="message"></p>
+    </div>
+
+    <footer>
+      <p>© 2025 CyberNet — Student Management</p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("addForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const rollNumber = document.getElementById("roll").value.trim();
+      const course = document.getElementById("course").value.trim();
+      const msg = document.getElementById("msg");
+
+      msg.textContent = "";
+      msg.className = "message";
+
+      try {
+        const res = await fetch("/api/students", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, rollNumber, course }),
+        });
+
+        if (res.ok) {
+          msg.textContent = "✅ Student added successfully!";
+          msg.classList.add("success");
+          e.target.reset();
+        } else {
+          msg.textContent = "❌ Failed to add student!";
+          msg.classList.add("error");
+        }
+      } catch (err) {
+        msg.textContent = "⚠️ Server error — please try again later.";
+        msg.classList.add("error");
+      }
+    });
+  </script>
+</body>
+</html>

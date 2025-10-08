@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Students — CyberNet</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>⚡ All Students</h1>
+      <p class="subtitle">Explore the neon roster of the Cyber Academy.</p>
+    </header>
+
+    <div class="card">
+      <div class="top-actions">
+        <button class="neon-btn blue" onclick="location.href='index.html'">← Back</button>
+        <button id="loadBtn" class="neon-btn pink">⚙️ Load Students</button>
+      </div>
+      <ul id="studentList" class="neon-list"></ul>
+    </div>
+
+    <footer>
+      <p>© 2025 CyberNet — Student Management</p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("loadBtn").addEventListener("click", async () => {
+      const btn = document.getElementById("loadBtn");
+      const list = document.getElementById("studentList");
+      btn.textContent = "Loading...";
+      try {
+        const res = await fetch("/api/students");
+        const data = await res.json();
+        list.innerHTML = "";
+        if (data.length === 0) {
+          list.innerHTML = `<li class="empty">No student records found.</li>`;
+        } else {
+          data.forEach((s, index) => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+              <span class="roll">${s.rollNumber}</span>
+              <div class="info">
+                <strong>${s.name}</strong>
+                <small>${s.course}</small>
+              </div>`;
+            list.appendChild(li);
+          });
+        }
+      } catch (err) {
+        alert("⚠️ Failed to load students from server.");
+      }
+      btn.textContent = "⚙️ Load Students";
+    });
+  </script>
+</body>
+</html>
